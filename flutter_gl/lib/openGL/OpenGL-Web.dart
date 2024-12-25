@@ -1,5 +1,6 @@
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
 import 'dart:ui' as ui;
-import 'dart:html';
 
 import './OpenGL-Base.dart';
 import 'opengl/OpenGLContextES.dart'
@@ -37,15 +38,19 @@ class OpenGLWeb extends OpenGLBase {
     this.divId = options["divId"];
     this.dpr = options["dpr"];
 
-    final CanvasElement domElement = CanvasElement(
-          width: (width * dpr).toInt(), height: (height * dpr).toInt())
-        ..id = 'canvas-id';
+    final html.CanvasElement domElement = html.CanvasElement(
+        width: (width * dpr).toInt(), height: (height * dpr).toInt())
+      ..id = 'canvas-id';
 
     this.element = domElement;
 
-    ui.platformViewRegistry.registerViewFactory(divId, (int viewId) {
-      return domElement;
-    });
+    if (kIsWeb) {
+      html.window.console.log('Registering view for Web');
+      /*ui.platformViewRegistry.registerViewFactory(divId, (int viewId) {
+        return domElement;
+      });*/
+      html.document.body!.append(domElement);
+    }
   }
 
   makeCurrent(List<int> egls) {
